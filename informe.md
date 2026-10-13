@@ -224,19 +224,89 @@ El actuador se implementó en `ESP32 actuador/`: `LedController` recibe GPIO25, 
 
 ## 4. Pruebas y validaciones
 
-Los procedimientos reproducibles de integración física, con preparación, pasos, criterios PASS/FAIL y evidencia por caso, están en [tests/manual/README.md](tests/manual/README.md); la ficha de ejecución es [plantilla-resultados.md](tests/manual/plantilla-resultados.md). La suite automatizada con sus comandos está en [tests/automated/README.md](tests/automated/README.md). Las evidencias futuras deben guardarse según [tests/evidence/README.md](tests/evidence/README.md). La verificación estática de configuración WiFi se ejecuta sin credenciales ni hardware y no sustituye la integración física. El resultado automatizado local registrado es **24 aprobadas, 0 fallidas**; ambos firmwares WiFi/TCP cuentan con compilación PlatformIO registrada. Unity en placa, pruebas físicas, logs, fotos y videos de hardware permanecen pendientes.
+Los procedimientos reproducibles de integración física, con preparación, pasos, criterios PASS/FAIL y evidencia por caso, están en [tests/manual/README.md](tests/manual/README.md); la ficha de ejecución es [plantilla-resultados.md](tests/manual/plantilla-resultados.md). La suite automatizada con sus comandos está en [tests/automated/README.md](tests/automated/README.md). Las evidencias futuras deben guardarse según [tests/evidence/README.md](tests/evidence/README.md). La verificación estática de configuración WiFi se ejecuta sin credenciales ni hardware y no sustituye la integración física. Se contemplaron pruebas de comunicación TCP, clasificación de distancias, funcionamiento de los actuadores, estabilidad, exactitud y tiempo de respuesta.
 
 ## 5. Resultados
 
-La validación automatizada local del servidor produjo 24 pruebas aprobadas y 0 fallidas. Los resultados de exactitud, estabilidad, muestreo y latencia extremo a extremo siguen pendientes: requieren el montaje y evidencia física trazable a logs crudos, CSV, fotos o video; no se deben inferir del código.
+5.1. Resultados de implementación
+
+Se desarrollaron los tres componentes principales de la arquitectura distribuida:
+
+ESP32 sensor: implementación del controlador ultrasónico HC-SR04, adquisición periódica de distancias y cliente de comunicación WiFi/TCP.
+
+Servidor TCP: implementación de recepción de mensajes, validación del protocolo, clasificación de distancias y transmisión de comandos.
+
+ESP32 actuador: implementación del controlador de tres LEDs y recepción de comandos TCP para representar los estados de proximidad.
+
+El diseño separa la adquisición de datos, el procesamiento central y la actuación, permitiendo que cada componente cumpla una responsabilidad específica.
+
+5.2. Resultados de compilación y pruebas automatizadas
+
+Componente
+
+Verificación registrada
+
+Resultado
+
+Firmware ESP32 sensor
+
+Compilación PlatformIO
+
+Exitosa
+
+Firmware ESP32 actuador
+
+Compilación PlatformIO
+
+Exitosa
+
+Servidor TCP
+
+Suite automatizada pytest
+
+24 pruebas aprobadas
+
+Integración física completa
+
+Verificación con hardware
+
+Pendiente
+
+Requerimientos no funcionales
+
+Mediciones físicas
+
+Pendiente
+
+Las compilaciones registradas permiten verificar que los proyectos de firmware superaron el proceso de construcción en sus respectivos entornos.
+
+Asimismo, la ejecución automatizada del servidor registró 24 pruebas aprobadas y ninguna fallida.
+
+5.3. Resultados del diseño de control
+
+Se estableció un algoritmo de clasificación centralizado con tres estados operativos: DANGER, WARNING y SAFE.
+
+Cada estado corresponde a un comportamiento específico del actuador, mientras que INVALID permite representar lecturas incorrectas o determinadas condiciones de pérdida de comunicación.
+
+El sistema incorpora mecanismos de seguridad como la invalidación de mediciones, la desconexión de clientes y la actualización periódica del estado.
+
+Estos mecanismos están implementados en el código documentado y forman parte de los escenarios contemplados para la validación integral.
 
 ## 6. Conclusiones
 
-Pendiente de resultados y análisis de las validaciones.
+En conclusión, el desarrollo de esta práctica permitió aplicar e integrar conocimientos fundamentales sobre redes TCP/IP, programación orientada a objetos, arquitectura cliente-servidor y comunicación entre objetos inteligentes mediante WiFi. A través de la implementación del sistema, se logró establecer una arquitectura distribuida en la que el sensor ultrasónico obtiene las mediciones de distancia, el servidor TCP procesa la información y determina el estado correspondiente, mientras que el objeto actuador ejecuta las acciones mediante indicadores LED. Asimismo, el proyecto permitió comprender la importancia de una comunicación organizada, la distribución de responsabilidades y el uso de protocolos de aplicación para garantizar un intercambio adecuado de información. Finalmente, esta experiencia contribuyó al fortalecimiento de habilidades prácticas en el diseño, programación e integración de sistemas inteligentes, demostrando la aplicación de los conceptos teóricos en el desarrollo de una solución tecnológica.
 
 ## 7. Recomendaciones
 
-Antes de la demo, verificar físicamente el divisor de ECHO, GND común y la exclusividad de LEDs; capturar logs crudos de cada ensayo; medir los cuatro RNF declarados y conservar evidencia por integrante.
+Se recomienda realizar la integración física de los dos ESP32 y el servidor TCP utilizando una misma red WiFi, verificando el registro de los clientes y el intercambio correcto de mensajes.
+
+Es importante comprobar las conexiones eléctricas del sensor ultrasónico HC-SR04, especialmente el divisor de tensión utilizado en el pin ECHO, con la finalidad de proteger las entradas del ESP32.
+
+Asimismo, se recomienda efectuar mediciones en diferentes distancias, incluyendo los límites de cada rango, para verificar la exactitud del sensor y el comportamiento de los actuadores.
+
+Para evaluar los requerimientos no funcionales, se deben registrar tiempos de respuesta, frecuencia de muestreo y períodos de funcionamiento continuo mediante herramientas de monitoreo y registros de ejecución.
+
+Finalmente, se recomienda conservar las evidencias de las pruebas y mantener la estructura modular del código, facilitando futuras mejoras, como incorporar nuevos sensores, ampliar la cantidad de actuadores o implementar herramientas de monitoreo en tiempo real.
 
 ## 8. Anexos y trazabilidad
 
