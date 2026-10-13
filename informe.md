@@ -236,7 +236,15 @@ Pendiente de resultados y análisis de las validaciones.
 
 ## 7. Recomendaciones
 
-Antes de la demo, verificar físicamente el divisor de ECHO, GND común y la exclusividad de LEDs; capturar logs crudos de cada ensayo; medir los cuatro RNF declarados y conservar evidencia por integrante.
+Se recomienda realizar la integración física de los dos ESP32 y el servidor TCP utilizando una misma red WiFi, verificando el registro de los clientes y el intercambio correcto de mensajes.
+
+Es importante comprobar las conexiones eléctricas del sensor ultrasónico HC-SR04, especialmente el divisor de tensión utilizado en el pin ECHO, con la finalidad de proteger las entradas del ESP32.
+
+Asimismo, se recomienda efectuar mediciones en diferentes distancias, incluyendo los límites de cada rango, para verificar la exactitud del sensor y el comportamiento de los actuadores.
+
+Para evaluar los requerimientos no funcionales, se deben registrar tiempos de respuesta, frecuencia de muestreo y períodos de funcionamiento continuo mediante herramientas de monitoreo y registros de ejecución.
+
+Finalmente, se recomienda conservar las evidencias de las pruebas y mantener la estructura modular del código, facilitando futuras mejoras, como incorporar nuevos sensores, ampliar la cantidad de actuadores o implementar herramientas de monitoreo en tiempo real.
 
 ## 8. Anexos y trazabilidad
 
